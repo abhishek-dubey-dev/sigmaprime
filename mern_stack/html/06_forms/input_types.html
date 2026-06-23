@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/action">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter username" name="username"/>
+        </div>
+        <br>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password" name="password"/>
+        </div>
+        <br>
+        <div>
+            <label for="number">Age:</label>
+            <input type="number" id="number" placeholder="Enter age" name="age"/>
+        </div>
+        <br>
+        <input type="checkbox" id="checkbox" name="checkbox"/>
+        <label for="checkbox">I agree to the terms and conditions</label>
+       <div>
+        <input type="radio" id="apple" name="fruit" value="apple"/>
+        <label for="apple">Apple</label>
+        <input type="radio" id="banana" name="fruit" value="banana"/>
+        <label for="banana">Banana</label>
+        <input type="radio" id="orange" name="fruit" value="orange"/>
+        <label for="orange">Orange</label>
+       </div>
+        <br>
+        <br>
+        <div>
+            Choose your subjects:
+            <input type="checkbox" id="math" name="sub" value="math"/>
+            <label for="math">Math</label>
+            <input type="checkbox" id="science" name="sub" value="science"/>
+            <label for="science">Science</label>
+            <input type="checkbox" id="history" name="sub" value="history"/>
+            <label for="history">History</label>
+            <input type="checkbox" id="events" name="sub" value="events"/>
+            <label for="events">Attend events</label>
+        </div>
+        <br>
+        <div>
+            <select name="profession" id="profession">
+                Choose your profession:
+                <option value="stu">Student</option>
+                <option value="dev">Developer</option>
+                <option value="man">Manager</option>
+
+            </select>
+        </div>
+        <label for="vol">Select your volume level:</label>
+        <input type="range" id="vol" name="vol" min="0" max="100"/>
+        <br>
+        <label for="feedback">Please give your valuable feedback:</label>
+        <textarea id="feedback" name="feedback" placeholder="Enter your feedback here" rows="4" cols="50"></textarea>
+        <br>
+        <button type="submit">Type1</button>
+        <button type="button">Type2</button>
+        <button type="reset">Type3</button>
+        <br>
+        <br>
+        <input type="button" value="Click me">
+        <input type="submit" value="Click me Button 2"/>
+    </form>
+   <hr/>
+   <form action="https://www.youtube.com/results">
+    <input type="text" name="search_query" placeholder="Search YouTube">
+    <button type="submit">Search</button>
+</body>
+</html>
