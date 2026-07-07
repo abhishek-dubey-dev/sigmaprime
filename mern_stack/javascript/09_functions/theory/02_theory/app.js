@@ -42,3 +42,63 @@ const pow = (a, b) => {
 const hello = () => {
   console.log("Hello World!");
 };
+
+//Implicit Return in Arrow Functions
+//If the function body contains only a single expression, you can omit the curly braces and the return keyword. The value of that expression will be implicitly returned.
+const mul = (a, b) => a * b;
+
+//Set TimeOut Function
+console.log("Hii there!");
+
+setTimeout(() => {
+  console.log("Apna College");
+}, 4000);
+
+console.log("Welcome to");
+
+//Set Interval Function
+/* console.log("Hii there!");
+
+setInterval(() => {
+  console.log("Apna College");
+}, 2000);
+
+console.log("Welcome to"); */
+
+//Set Interval Call
+let id = console.log("Hii there!");
+
+setTimeout(() => {
+  console.log("Apna College");
+}, 4000);
+
+console.log(id);
+
+//this with Arrow Functions
+const student = {
+  name: "Abhishek",
+  marks: 95,
+  prop: this, //global scope
+  getName: function () {
+    //console.log(this);
+    return this.name;
+  },
+  getMarks: () => {
+    //console.log(this);
+    return this.marks;
+  },
+  getInfo1: function () {
+    setTimeout(() => {
+      console.log(this); //student
+    }, 2000);
+  },
+  getInfo2: function () {
+    setTimeout(function () {
+      console.log(this); //window
+    }, 2000);
+  },
+};
+
+//Arrow function to return square of a number
+const square = (n) => n * n;
+console.log(square(2));
