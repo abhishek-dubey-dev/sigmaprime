@@ -20,7 +20,7 @@ arr.forEach(print); */
 
 //forEach for array of objects
 
-let arr = [
+/* let arr = [
   {
     name: "Abhishek",
     marks: 95,
@@ -37,7 +37,13 @@ let arr = [
 
 arr.forEach((student) => {
   console.log(student.marks);
-});
-
+}); */
 
 //map
+
+let num = [1, 2, 3, 4];
+
+let double = num.map((el) => {
+  //return el * 2;
+  return el * el;
+});
