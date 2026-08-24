@@ -6,9 +6,6 @@ const path= require("path");
 
 const MONGO_URL = "mongodb://localhost:27017/mydatabase";
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
 main()
   .then(() => {
     console.log("Database connection established");
@@ -29,7 +26,19 @@ app.get("/", (req, res) => {
 //Index route
 app.get("/listings", async (req, res) => {
 const allListings = await listing.find({});
-  res.render("/listings/index.js", { listings: allListings });
+  res.render("listings/index", { allListings });
+});
+
+//Show Route
+app.get("/listings/:id", async (req, res) => {
+  const { id } = req.params;
+  const foundListing = await listing.findById(id);
+  res.render("listings/show", { foundListing });
+});
+
+//Create New Route
+app.get("/listings/new", (req, res) => {
+  res.render("listings/new");
 });
 
 app.listen(8080, () => {
