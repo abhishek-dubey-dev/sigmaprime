@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wanderlust</title>
-</head>
-<body>
+<% layout("layouts/boilerplate") %>
+  <body>
     <h3>Listing Details :</h3>
     <ul>
-        <li>Title: <%= foundListing.title %></li>
-        <li>Description: <%= foundListing.description %></li>
-         <li>Price: &#8377;<%= foundListing.price.toLocaleString("en-IN") %></li>
-         <li>Location: <%= foundListing.location %></li>
-          <li>Country: <%= foundListing.country %></li>
+      <li>Title: <%= foundListing.title %></li>
+      <li>Description: <%= foundListing.description %></li>
+      <li>Price: &#8377;<%= foundListing.price.toLocaleString("en-IN") %></li>
+      <li>Location: <%= foundListing.location %></li>
+      <li>Country: <%= foundListing.country %></li>
     </ul>
-</body>
-</html>
+    <br />
+    <a href="/listings/<%= foundListing._id %>/edit">Edit this Listing</a>
+
+    <form
+      action="/listings/<%= foundListing._id %>?_method=DELETE"
+      method="POST"
+    >
+      <button type="submit">Delete this Listing</button>
+    </form>
+  </body>
+
