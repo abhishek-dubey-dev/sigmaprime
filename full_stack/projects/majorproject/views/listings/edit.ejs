@@ -12,7 +12,7 @@
         <input type="text" name="description" value="<%= foundListing.description %>" placeholder="Enter Description" />
         <input type="number" name="price" value="<%= foundListing.price %>" placeholder="Enter Price" />
         <input type="text" name="location" value="<%= foundListing.location %>" placeholder="Enter Location" />
-        <input type="text" name="image" value="<%= foundListing.image %>" placeholder="Enter Image URL" />
+        <input type="text" name="image" value="<%= foundListing.image.url || foundListing.image %>" placeholder="Enter Image URL" />
         <input type="text" name="country" value="<%= foundListing.country %>" placeholder="Enter Country" />
         <br>
         <button type="submit">Update Listing</button>
