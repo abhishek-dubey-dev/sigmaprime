@@ -62,7 +62,7 @@ body {
 }
 
 /* Crads */
-.card {
+.listing-card {
   border: none !important;
   margin-bottom: 1rem;
 }
@@ -147,6 +147,16 @@ body {
   border: 1px solid #f0f0f0;
   border-radius: 1.2rem;
   overflow: hidden;
+  box-shadow: 0 0.25rem 0.9rem rgba(0, 0, 0, 0.05);
+}
+
+.show-listing-card {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  border-radius: 1.2rem;
   box-shadow: 0 0.25rem 0.9rem rgba(0, 0, 0, 0.05);
 }
 
