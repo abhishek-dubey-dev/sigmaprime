@@ -7,7 +7,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExressError");
-const { listingSchema } = require("./schema.js");
+const { listingSchema, reviewSchema } = require("./schema.js");
+const Review = require("./models/review.js");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -72,12 +73,27 @@ app.get("/", (req, res) => {
 });
 
 const validateListingMiddleware = (req, res, next) => {
-  let {error} = listingSchema.validate(req.body, { abortEarly: false });
+  let { error } = listingSchema.validate(req.body, { abortEarly: false });
   if (error) {
     let errorMessages = error.details.map((err) => err.message).join(", ");
-  throw new ExpressError(error.details.map((err) => err.message).join(", "), 400);
+    throw new ExpressError(
+      error.details.map((err) => err.message).join(", "),
+      400,
+    );
+  } else {
+    next();
   }
-  else {
+};
+
+const validateReviewMiddleware = (req, res, next) => {
+  let { error } = reviewSchema.validate(req.body, { abortEarly: false });
+  if (error) {
+    let errorMessages = error.details.map((err) => err.message).join(", ");
+    throw new ExpressError(
+      error.details.map((err) => err.message).join(", "),
+      400,
+    );
+  } else {
     next();
   }
 };
@@ -100,7 +116,7 @@ app.get("/listings/:id", async (req, res) => {
     return res.redirect("/listings/new");
   }
 
-  const foundListing = await listing.findById(id);
+  const foundListing = await listing.findById(id).populate("reviews");
   res.render("listings/show", {
     foundListing,
     successMessage: req.query.success || "",
@@ -111,10 +127,13 @@ app.get("/listings/:id", async (req, res) => {
 app.post(
   "/listings",
   wrapAsync(async (req, res, next) => {
-   let result= listingSchema.validate(req.body, { abortEarly: false });
-   console.log(result.error);
+    let result = listingSchema.validate(req.body, { abortEarly: false });
+    console.log(result.error);
     if (result.error) {
-      throw new ExpressError(result.error.details.map((err) => err.message).join(", "), 400);
+      throw new ExpressError(
+        result.error.details.map((err) => err.message).join(", "),
+        400,
+      );
     }
     const newListing = new listing(req.body);
     await newListing.save();
@@ -157,6 +176,27 @@ app.delete("/listings/:id", async (req, res) => {
   await listing.findByIdAndDelete(id);
   res.redirect("/listings");
 });
+
+//Review route
+app.post(
+  "/listings/:id/reviews",
+  validateReviewMiddleware,
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+    const { rating, comment } = req.body.review;
+    const foundListing = await listing.findById(id);
+
+    if (!foundListing) {
+      return res.status(404).send("Listing not found");
+    }
+
+    const newReview = new Review({ comment, rating });
+    await newReview.save();
+    foundListing.reviews.push(newReview);
+    await foundListing.save();
+    res.redirect(`/listings/${id}?success=Review added successfully`);
+  }),
+);
 
 // Catch-all route for undefined routes
 app.use((req, res, next) => {
