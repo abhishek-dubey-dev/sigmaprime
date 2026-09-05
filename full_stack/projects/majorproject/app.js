@@ -11,9 +11,13 @@ const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
-const listings = require("./routes/listing.js");
-const reviews = require("./routes/review.js");
+const listingsRouter = require("./routes/listing.js");
+const reviewsRouter = require("./routes/review.js");
+const userRouter = require("./routes/user.js");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -35,7 +39,7 @@ const MONGO_URL = "mongodb://localhost:27017/mydatabase";
     errors.push("Description is required.");
   }
 
-  if (!data.price || Number(data.price) <= 0) {
+  if (!data.price || "Number(data.price) <= 0) {
     errors.push("Price must be greater than 0.");
   }
 
@@ -87,6 +91,13 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
@@ -97,9 +108,21 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/listings", listings);
+// app.get("/demouser", async (req, res) => {
+ // let fakeUser = new User({
+ //   email: "student@gmail.com",
+//    username: "delta-student",
+//  });
 
-app.use("/listings/:id/reviews", reviews);
+ // let registeredUser = await User.register(fakeUser, "helloworld");
+ // res.send(registeredUser);
+ //}); 
+
+app.use("/listings", listingsRouter);
+
+app.use("/listings/:id/reviews", reviewsRouter);
+
+app.use("/", userRouter);
 
 // Catch-all route for undefined routes
 app.use((req, res, next) => {
