@@ -61,7 +61,7 @@ body {
   gap: 0.5rem;
 }
 
-/* Crads */
+/* Cards */
 .listing-card {
   border: none !important;
   margin-bottom: 1rem;
@@ -218,7 +218,7 @@ body {
 }
 
 .review-form input[type="range"] {
-  padding: 0.2rem 0;
+  padding: 0.01rem 0;
   border: none;
   box-shadow: none;
 }
