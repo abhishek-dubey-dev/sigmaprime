@@ -4,22 +4,20 @@ const Listing = require("../models/listing.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/mydatabase";
 
-main()
-  .then(() => {
-    console.log("connected to DB");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 async function main() {
   await mongoose.connect(MONGO_URL);
+  console.log("connected to DB");
+
+  await Listing.deleteMany({});
+  const listings = initData.data.map((obj) => ({ ...obj }));
+  await Listing.insertMany(listings);
+  console.log("data was initialized");
+
+  await mongoose.connection.close();
 }
 
-const initDB = async () => {
-  await Listing.deleteMany({});
-  await Listing.insertMany(initData.data);
-  console.log("data was initialized");
-};
-
-initDB();
+main().catch(async (err) => {
+  console.error("Database initialization error:", err);
+  await mongoose.connection.close();
+  process.exitCode = 1;
+});

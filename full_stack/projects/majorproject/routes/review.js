@@ -2,27 +2,18 @@ const express= require("express");
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync");
 const ExpressError = require("../utils/ExressError");
-const { reviewSchema } = require("../schema.js");
+
 const Review = require("../models/review");
 const listing = require("../models/listing");
+const { isLoggedIn, validateReviewMiddleware } = require("../middleware.js");
 
-const validateReviewMiddleware = (req, res, next) => {
-  let { error } = reviewSchema.validate(req.body, { abortEarly: false });
-  if (error) {
-    let errorMessages = error.details.map((err) => err.message).join(", ");
-    throw new ExpressError(
-      error.details.map((err) => err.message).join(", "),
-      400,
-    );
-  } else {
-    next();
-  }
-};
+
 
 //Review route
 //POST route
 router.post(
   "/",
+  isLoggedIn,
   validateReviewMiddleware,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
@@ -33,7 +24,7 @@ router.post(
       return res.status(404).send("Listing not found");
     }
 
-    const newReview = new Review({ comment, rating });
+    const newReview = new Review({ comment, rating, author: req.user._id });
     await newReview.save();
     foundListing.reviews.push(newReview);
     await foundListing.save();
@@ -45,11 +36,20 @@ router.post(
 //DELETE Review route
 router.delete(
   "/:reviewId",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params;
-    listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+    const foundListing = await listing.findById(id);
+    if (!foundListing) {
+      req.flash("error", "Listing not found");
+      return res.redirect("/listings");
+    }
+    if (!foundListing.owner || !foundListing.owner.equals(req.user._id)) {
+      req.flash("error", "You don't have permission to delete this review");
+      return res.redirect(`/listings/${id}`);
+    }
+    await listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
     await Review.findByIdAndDelete(reviewId);
-    await listing.findById(id);
     req.flash("success", "Review deleted successfully");
     res.redirect(`/listings/${id}?success=Review deleted successfully`);
   }),

@@ -78,13 +78,14 @@ async function main() {
 }
 
 const sessionOptions = {
-  secret: "mysupersecretecode",
+  secret: process.env.SESSION_SECRET || "development-session-secret",
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 week
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     httpOnly: true,
+    sameSite: "lax",
   },
 };
 
@@ -105,6 +106,7 @@ app.get("/", (req, res) => {
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currUser =req.user;
   next();
 });
 
