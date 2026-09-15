@@ -26,8 +26,8 @@ module.exports.createReview=async (req, res) => {
       req.flash("error", "Listing not found");
       return res.redirect("/listings");
     }
-    if (!foundListing.owner || !foundListing.owner.equals(req.user._id)) {
-      req.flash("error", "You don't have permission to delete this review");
+    if (!foundListing.reviews.some((review) => review.equals(reviewId))) {
+      req.flash("error", "Review not found for this listing");
       return res.redirect(`/listings/${id}`);
     }
     await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });

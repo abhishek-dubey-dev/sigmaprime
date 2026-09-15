@@ -14,7 +14,7 @@
       </div>
     <% } %>
 
-    <form action="/listings" method="POST" class="needs-validation" novalidate>
+    <form action="/listings" method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input
@@ -76,13 +76,12 @@
         />
         <div class="invalid-feedback">Please enter a valid location.</div>
       </div>
+
       <div class="mb-3">
-        <label for="image" class="form-label">Image Link</label>
+        <label for="image" class="form-label">Upload Listing Image</label>
         <input
-          type="text"
+          type="file"
           name="image"
-          value="<%= listing && listing.image ? listing.image : '' %>"
-          placeholder="Enter Image URL"
           class="form-control"
           required
         />
@@ -90,7 +89,7 @@
       </div>
 
       <button type="submit" class="btn btn-dark add-btn mt-3">
-        Create Listing
+        Add
       </button>
     </form>
   </div>

@@ -19,6 +19,7 @@
       method="POST"
       class="needs-validation"
       novalidate
+      enctype="multipart/form-data"
     >
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
@@ -81,17 +82,24 @@
         />
         <div class="invalid-feedback">Please enter a valid location.</div>
       </div>
+
       <div class="mb-3">
-        <label for="image" class="form-label">Image URL</label>
-        <input
-          type="text"
-          name="image"
-          value="<%= foundListing.image.url || foundListing.image %>"
-          placeholder="Enter Image URL"
-          class="form-control"
-          required
+        <p class="form-label mb-2">Original Listing Image</p>
+        <img
+          src="<%= originalImageUrl || '/images/default.jpg' %>"
+          alt="Current listing image"
+          class="img-fluid rounded"
         />
-        <div class="invalid-feedback">Please enter a valid image URL.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload New Image</label>
+        <input
+          type="file"
+          name="image"
+          class="form-control"
+        />
+        <div class="form-text">Leave empty to keep the current image.</div>
       </div>
 
       <button type="submit" class="btn btn-dark edit-btn mt-3">Update Listing</button>

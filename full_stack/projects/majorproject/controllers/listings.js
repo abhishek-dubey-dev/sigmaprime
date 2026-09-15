@@ -27,21 +27,35 @@ module.exports.showListing= async (req, res) => {
   res.render("listings/show", {
     foundListing,
     successMessage: req.query.success || "",
+    mapboxToken: /^pk\./.test(process.env.MAPBOX_TOKEN || "")
+      ? process.env.MAPBOX_TOKEN
+      : "",
   });
 }
 
 
 module.exports.createListing=async (req, res, next) => {
-    let result = listingSchema.validate(req.body, { abortEarly: false });
-    console.log(result.error);
+    if (!req.file) {
+      throw new ExpressError("An image is required", 400);
+    }
+    let url = req.file.path;
+    let filename = req.file.filename;
+    const listingData = {
+      ...req.body,
+      image: req.file
+        ? { filename: req.file.filename, url: req.file.path }
+        : req.body.image,
+    };
+    let result = listingSchema.validate(listingData, { abortEarly: false });
     if (result.error) {
       throw new ExpressError(
         result.error.details.map((err) => err.message).join(", "),
         400,
       );
     }
-    const newListing = new Listing(req.body);
+    const newListing = new Listing(listingData);
     newListing.owner= req.user._id;
+    newListing.image={url, filename};
     await newListing.save();
     req.flash("success", "Listing created successfully");
     res.redirect(
@@ -61,23 +75,14 @@ module.exports.createListing=async (req, res, next) => {
       req.flash("error", "You don't have permission to edit this listing");
       return res.redirect(`/listings/${id}`);
     }
-    res.render("listings/edit", { foundListing, errors: [] });
+  let originalImageUrl = foundListing.image && foundListing.image.url;
+    res.render("listings/edit", { foundListing, originalImageUrl });
 }
 
 
 module.exports.updateListing=async (req, res) => {
     const { id } = req.params;
-    const result = listingSchema.validate(req.body, { abortEarly: false });
-
-    if (result.error) {
-      const validationErrors = result.error.details.map((err) => err.message);
-      return res.status(400).render("listings/edit", {
-        foundListing: { ...req.body, _id: id },
-        errors: validationErrors,
-      });
-    }
-    
-  const existingListing = await Listing.findById(id);
+    const existingListing = await Listing.findById(id);
    if (!existingListing) {
      req.flash("error", "Listing not found");
      return res.redirect("/listings");
@@ -86,8 +91,24 @@ module.exports.updateListing=async (req, res) => {
      req.flash("error", "you don't have permission to edit");
      return res.redirect(`/listings/${id}`);
    }
-    const updatedListing = await Listing.findByIdAndUpdate(id, req.body, {
+    const listingData = {
+      ...req.body,
+      image: req.file
+        ? { filename: req.file.filename, url: req.file.path }
+        : existingListing.image,
+    };
+    const result = listingSchema.validate(listingData, { abortEarly: false });
+    if (result.error) {
+      const validationErrors = result.error.details.map((err) => err.message);
+      return res.status(400).render("listings/edit", {
+        foundListing: { ...existingListing.toObject(), ...req.body, _id: id },
+        originalImageUrl: existingListing.image && existingListing.image.url,
+        errors: validationErrors,
+      });
+    }
+    const updatedListing = await Listing.findByIdAndUpdate(id, listingData, {
       new: true,
+      runValidators: true,
     });
     req.flash("success", "Listing updated successfully");
     res.redirect(

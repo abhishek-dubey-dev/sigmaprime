@@ -1,17 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
+const { required } = require("joi");
 
 const listingSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   image: {
-    type: Schema.Types.Mixed,
-    required: true,
-    set: (value) =>
-      value && typeof value === "string" && value.trim() === ""
-        ? "default-image.jpg"
-        : value,
+    url:String,
+    filename:String,
   },
   price: { type: Number, required: true },
   location: { type: String, required: true },
@@ -20,6 +17,20 @@ const listingSchema = new Schema({
   owner:{
     type:Schema.Types.ObjectId,
     ref:"User",
+  },
+  geometry: {
+    type: {
+      type: String,
+      enum: ["Point"],
+    },
+    coordinates: {
+      type: [Number],
+      required:true
+    },
+  },
+  category:{
+    type:String,
+    enum:["mountains","arctic", "farms","deserts" ]
   }
 
 });

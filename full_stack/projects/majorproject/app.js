@@ -1,3 +1,6 @@
+require("dotenv").config();
+
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -26,7 +29,7 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
-const MONGO_URL = "mongodb://localhost:27017/mydatabase";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mydatabase";
 
 /* function validateListing(data) {
   const errors = [];
@@ -78,7 +81,7 @@ async function main() {
 }
 
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "development-session-secret",
+  secret: process.env.SESSION_SECRET || "development-only-change-me",
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -86,6 +89,7 @@ const sessionOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
     httpOnly: true,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   },
 };
 
@@ -99,9 +103,9 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.get("/", (req, res) => {
+/* app.get("/", (req, res) => {
   res.send("Hello World");
-});
+}); */
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
