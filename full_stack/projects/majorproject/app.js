@@ -13,10 +13,24 @@ const ExpressError = require("./utils/ExressError");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const Review = require("./models/review.js");
 const session = require("express-session");
+const MongoStoreModule = require("connect-mongo");
+const MongoStore = MongoStoreModule.MongoStore || MongoStoreModule.default || MongoStoreModule;
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
+
+const port = process.env.PORT || 8080;
+const sessionSecret = process.env.SESSION_SECRET || "development-only-change-me";
+const dbUrl = process.env.ATLASDB_URL || "mongodb://127.0.0.1:27017/wanderlust";
+
+if (!process.env.ATLASDB_URL) {
+  console.warn("ATLASDB_URL not found. Falling back to local MongoDB at mongodb://127.0.0.1:27017/wanderlust");
+}
+
+if (!process.env.SESSION_SECRET) {
+  console.warn("SESSION_SECRET not found. Using a development-only default secret.");
+}
 
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
@@ -29,45 +43,12 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/mydatabase";
 
-/* function validateListing(data) {
-  const errors = [];
-
-  if (!data.title || data.title.trim() === "") {
-    errors.push("Title is required.");
-  }
-
-  if (!data.description || data.description.trim() === "") {
-    errors.push("Description is required.");
-  }
-
-  if (!data.price || "Number(data.price) <= 0) {
-    errors.push("Price must be greater than 0.");
-  }
-
-  if (!data.location || data.location.trim() === "") {
-    errors.push("Location is required.");
-  }
-
-  if (!data.country || data.country.trim() === "") {
-    errors.push("Country is required.");
-  }
-
-  if (
-    !data.image ||
-    (typeof data.image === "string" && data.image.trim() === "")
-  ) {
-    errors.push("Image URL is required.");
-  }
-
-  return errors;
-} */
 
 main()
   .then(() => {
-    app.listen(8080, () => {
-      console.log("Server is running on port 8080");
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
     });
   })
   .catch((err) => {
@@ -76,12 +57,25 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
   console.log("Connected to MongoDB");
 }
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: process.env.SECRET ,
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", (err) => {
+  console.log("ERROR IN MONGO SESSION STORE", err);
+});
+
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "development-only-change-me",
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -92,6 +86,8 @@ const sessionOptions = {
     secure: process.env.NODE_ENV === "production",
   },
 };
+
+
 
 app.use(session(sessionOptions));
 app.use(flash());

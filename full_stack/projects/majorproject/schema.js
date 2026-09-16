@@ -9,7 +9,11 @@ module.exports.listingSchema = joi.object({
   image: joi.alternatives().try(
     joi.string().uri(),
     joi.object({ filename: joi.string().required(), url: joi.string().uri().required() }),
-  ).required(),
+  ).optional().allow(null),
+  geometry: joi.object({
+    type: joi.string().valid("Point").optional(),
+    coordinates: joi.array().items(joi.number()).length(2).optional(),
+  }).optional(),
 });
 
 module.exports.reviewSchema = joi.object({

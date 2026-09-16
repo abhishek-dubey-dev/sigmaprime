@@ -1,39 +1,54 @@
 require("dotenv").config();
 
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const CloudinaryStorage = require("multer-storage-cloudinary");
 
 const cloudName = process.env.CLOUD_NAME || process.env.CLOUDINARY_CLOUD_NAME;
 const apiKey = process.env.CLOUD_API_KEY || process.env.CLOUDINARY_API_KEY;
 const apiSecret = process.env.CLOUD_API_SECRET || process.env.CLOUDINARY_API_SECRET;
 
-const missingVariables = [
-  ["CLOUD_NAME/CLOUDINARY_CLOUD_NAME", cloudName],
-  ["CLOUD_API_KEY/CLOUDINARY_API_KEY", apiKey],
-  ["CLOUD_API_SECRET/CLOUDINARY_API_SECRET", apiSecret],
-].filter(([, value]) => !value)
-  .map(([name]) => name);
+const isCloudinaryConfigured = Boolean(cloudName && apiKey && apiSecret);
 
-if (missingVariables.length) {
-  throw new Error(`Missing Cloudinary environment variables: ${missingVariables.join(", ")}`);
+if (!isCloudinaryConfigured) {
+  console.warn("Cloudinary env vars missing. Falling back to local file upload storage.");
 }
 
-cloudinary.config({
-  cloud_name: cloudName,
-  api_key: apiKey,
-  api_secret: apiSecret,
-});
+if (isCloudinaryConfigured) {
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+  });
+}
 
+const uploadDir = path.join(__dirname, "uploads");
+fs.mkdirSync(uploadDir, { recursive: true });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "wanderlust_DEV",
-    allowed_formats: ["png", "jpg", "jpeg"],
+const localStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const safeName = `${Date.now()}-${file.originalname.replace(/\s+/g, "-")}`;
+    cb(null, safeName);
   },
 });
 
+const storage = isCloudinaryConfigured
+  ? CloudinaryStorage({
+      cloudinary,
+      params: {
+        folder: "wanderlust_DEV",
+        allowed_formats: ["png", "jpg", "jpeg"],
+      },
+    })
+  : localStorage;
+
 module.exports = {
-    cloudinary,
-    storage,
+  cloudinary,
+  storage,
+  localStorage,
 };
