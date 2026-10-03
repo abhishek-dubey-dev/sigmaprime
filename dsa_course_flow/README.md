@@ -9,6 +9,7 @@ Java-focused learning repository covering data structures, algorithms, object-or
 - `bit_manipulation` - Bit operations and number utilities
 - `divide_conquer` - Merge sort, quick sort, and rotated-array search
 - `oops` - Core object-oriented programming examples in Java
+- `queue` - Queue, deque, stack implementations, and queue algorithms
 - `recursion` - Recursion patterns and classic problems
 - `sorting` - Fundamental sorting algorithms
 - `strings` - String processing and string algorithms
