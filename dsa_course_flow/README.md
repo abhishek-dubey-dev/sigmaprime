@@ -8,6 +8,7 @@ Java-focused learning repository covering data structures, algorithms, object-or
 - `backtracking` - Permutations, N-Queens, Sudoku, and grid problems
 - `bit_manipulation` - Bit operations and number utilities
 - `divide_conquer` - Merge sort, quick sort, and rotated-array search
+- `greedy` - Activity selection, knapsack, job sequencing, coin change, and related problems
 - `oops` - Core object-oriented programming examples in Java
 - `queue` - Queue, deque, stack implementations, and queue algorithms
 - `recursion` - Recursion patterns and classic problems
