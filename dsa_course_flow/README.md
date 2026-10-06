@@ -7,6 +7,7 @@ Java-focused learning repository covering data structures, algorithms, object-or
 - `arrays` - Array operations and subarray problems
 - `backtracking` - Permutations, N-Queens, Sudoku, and grid problems
 - `bit_manipulation` - Bit operations and number utilities
+- `bst` - Binary search trees, AVL trees, validation, balancing, and traversal
 - `divide_conquer` - Merge sort, quick sort, and rotated-array search
 - `greedy` - Activity selection, knapsack, job sequencing, coin change, and related problems
 - `oops` - Core object-oriented programming examples in Java
