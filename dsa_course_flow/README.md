@@ -9,6 +9,7 @@ Java-focused learning repository covering data structures, algorithms, object-or
 - `bit_manipulation` - Bit operations and number utilities
 - `bst` - Binary search trees, AVL trees, validation, balancing, and traversal
 - `divide_conquer` - Merge sort, quick sort, and rotated-array search
+- `dp` - Dynamic programming examples including knapsack, sequence, and counting problems
 - `greedy` - Activity selection, knapsack, job sequencing, coin change, and related problems
 - `oops` - Core object-oriented programming examples in Java
 - `queue` - Queue, deque, stack implementations, and queue algorithms
@@ -16,7 +17,7 @@ Java-focused learning repository covering data structures, algorithms, object-or
 - `sorting` - Fundamental sorting algorithms
 - `strings` - String processing and string algorithms
 - `two_d_arrays` - Matrix traversal and search problems
-- Additional topic folders for trees, graphs, hashing, heaps, linked lists, queues, stacks, tries, and dynamic programming
+- Additional topic folders for trees, graphs, hashing, heaps, linked lists, queues, stacks, and tries
 
 ## Run an Example
 
